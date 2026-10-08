@@ -1,72 +1,86 @@
-@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400&family=Roboto:wght@400;500&display=swap');
 @import 'tailwindcss';
 
-@theme {
-  --font-display: 'Archivo Black', system-ui, sans-serif;
-  --font-sans: 'Space Grotesk', system-ui, sans-serif;
+@keyframes flower-drift {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(3px, -4px) rotate(8deg); }
+  66% { transform: translate(-3px, 2px) rotate(-6deg); }
 }
-
-body {
-  background: #12131a;
+@keyframes umbel-sway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(3deg); }
 }
-
-/* Plants pivot from the bottom of their own bounding box (the stem base). */
-.sway {
+.flower-drift {
   transform-box: fill-box;
-  transform-origin: 50% 100%;
-  animation: sway var(--dur, 8s) ease-in-out infinite;
-  animation-delay: var(--delay, 0s);
+  transform-origin: center;
+  animation: flower-drift 10s cubic-bezier(.45,.05,.55,.95) infinite;
 }
-
-@keyframes sway {
-  0%,
-  100% {
-    transform: rotate(calc(var(--amp, 3deg) * -1));
-  }
-  50% {
-    transform: rotate(var(--amp, 3deg));
-  }
+.umbel-sway {
+  animation: umbel-sway 15s cubic-bezier(.45,.05,.55,.95) infinite;
 }
-
-.twinkle {
-  animation: twinkle var(--dur, 4s) ease-in-out infinite;
-  animation-delay: var(--delay, 0s);
-}
-
-@keyframes twinkle {
-  0%,
-  100% {
-    opacity: 0.2;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-.breathe {
-  animation: breathe 7s ease-in-out infinite;
-}
-
-@keyframes breathe {
-  0%,
-  100% {
-    opacity: 0.55;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-.grain {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-  mix-blend-mode: multiply;
-  opacity: 0.35;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .sway,
-  .twinkle,
-  .breathe {
-    animation: none;
-  }
+  .flower-drift, .umbel-sway { animation: none; }
+}
+
+@keyframes branch-sway {
+  0%, 100% { transform: rotate(-1.2deg); }
+  50% { transform: rotate(1.8deg); }
+}
+@keyframes leaf-flutter {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(3deg); }
+}
+.branch-sway { animation: branch-sway 12s cubic-bezier(.45,.05,.55,.95) infinite; }
+.leaf-flutter { animation: leaf-flutter 7s cubic-bezier(.45,.05,.55,.95) infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .branch-sway, .leaf-flutter { animation: none; }
+}
+
+@keyframes skill-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes skill-rise {
+  from { opacity: 0; transform: translateY(10px); filter: blur(4px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+@keyframes skill-pop { from { transform: scale(0); } to { transform: scale(1); } }
+.skill-line { stroke-dasharray: 1; animation: skill-draw 550ms cubic-bezier(.22,1,.36,1) both; }
+.skill-node { transform-box: fill-box; transform-origin: center; animation: skill-pop 400ms 350ms cubic-bezier(.34,1.56,.64,1) both; }
+.skill-text { animation: skill-rise 700ms 380ms cubic-bezier(.22,1,.36,1) both; }
+
+@keyframes leaf-fall {
+  from { transform: translateY(-10vh); }
+  to { transform: translateY(110vh); }
+}
+@keyframes leaf-fall-sway {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  50% { transform: translateX(var(--sway)) rotate(var(--spin)); }
+}
+/* drift left quickly at first, then ease off so the path bends downward */
+@keyframes leaf-drift {
+  from { transform: translateX(0); }
+  to { transform: translateX(-75vw); }
+}
+.falling-leaf { animation: leaf-fall linear infinite; will-change: transform; }
+.falling-leaf-drift { animation: leaf-drift cubic-bezier(.25,.7,.45,1) infinite; will-change: transform; }
+.falling-leaf-sway { animation: leaf-fall-sway cubic-bezier(.45,.05,.55,.95) infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .falling-leaf, .falling-leaf-drift, .falling-leaf-sway { animation: none; }
+  .falling-leaf { display: none; }
+}
+
+/* hydrangea colour cycle: pink <-> blue, a new hue every 7s */
+@property --h-petal { syntax: '<color>'; inherits: true; initial-value: #f3b3c3; }
+@property --h-budEdge { syntax: '<color>'; inherits: true; initial-value: #e494a7; }
+@property --h-openPetal { syntax: '<color>'; inherits: true; initial-value: #e7869e; }
+@property --h-openHalo { syntax: '<color>'; inherits: true; initial-value: #d1657d; }
+@property --h-openInner { syntax: '<color>'; inherits: true; initial-value: #f6c3cf; }
+@property --h-ring { syntax: '<color>'; inherits: true; initial-value: #b8293d; }
+@property --h-glow { syntax: '<color>'; inherits: true; initial-value: #ff8fac; }
+@keyframes hydrangea {
+  0%, 25% { --h-ring: #b8293d; --h-petal: #f3b3c3; --h-budEdge: #e494a7; --h-openPetal: #e7869e; --h-openHalo: #d1657d; --h-openInner: #f6c3cf; --h-glow: #ff8fac; }
+  50%, 75% { --h-ring: #1f2f7a; --h-petal: #b8cbf3; --h-budEdge: #8eaae4; --h-openPetal: #8aa8ea; --h-openHalo: #6283d4; --h-openInner: #d6e2fa; --h-glow: #8fb4ff; }
+  100% { --h-ring: #b8293d; --h-petal: #f3b3c3; --h-budEdge: #e494a7; --h-openPetal: #e7869e; --h-openHalo: #d1657d; --h-openInner: #f6c3cf; --h-glow: #ff8fac; }
+}
+.hydrangea { animation: hydrangea 14s cubic-bezier(.45,.05,.55,.95) infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .hydrangea { animation: none; }
 }
